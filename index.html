@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carousel</title>
+  <style>
+
+    * {
+      box-sizing: border-box;
+      padding: 0;
+    }
+
+    :root {
+      --image-width: 100px;
+      --image-height: 100px;
+      --image-count: 3;
+    }
+
+    .viewbox {
+      margin: auto;
+      width: var(--image-width);      
+      border: 2px solid #aaa;
+      overflow: hidden;
+    }
+
+    .images {
+      /* width: calc(var(--image-width)*var(--image-count)); */
+      position: relative;
+      height: var(--image-height);
+      display: flex;
+    }
+    .images img {
+      position: absolute;
+      top: 0;
+      transition: 1s;
+    }
+
+    .actions {
+      text-align: center;
+    }
+    .actions button {
+      padding: 0 10px;
+    }
+
+  </style>
+  <script defer src="./script.js"></script>
+</head>
+<body>
+
+  <h2>Carousello - round & round & round...</h2>
+ 
+  <div class="carousel">
+
+    <div class="viewbox">
+      <div class="images"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-previous">&lt;</button>
+      <button class="btn-next">&gt;</button>
+    </div>
+
+  </div>
+
+</body>
+</html>
