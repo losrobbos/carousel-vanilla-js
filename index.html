@@ -25,14 +25,33 @@
       text-align: center;
     }
 
-    .viewbox {
+    .viewbox {      
       margin: auto;
+      position: relative;
       width: var(--image-width);      
       border: 2px solid #aaa;
       overflow: hidden;
       /* border: 1px solid #ccc; */
       border-radius: 20px;
     }
+
+    .viewbox button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 20px;
+      /* top: 0;
+      bottom: 0; */
+      opacity: 0.5;
+      z-index: 1;
+    }
+    .viewbox button:nth-of-type(1) {
+      left: 0;
+    }
+    .viewbox button:nth-of-type(2) {
+      right: 0;
+    }
+
 
     .images {
       position: relative;
@@ -58,14 +77,12 @@
 </head>
 <body>
 
-  <h2>Carousello - round & round & round...</h2>
+  <h2>Round & round & round...</h2>
  
   <div class="carousel">
 
     <div class="viewbox">
       <div class="images"></div>
-    </div>
-    <div class="actions">
       <button class="btn-previous">&lt;</button>
       <button class="btn-next">&gt;</button>
     </div>
