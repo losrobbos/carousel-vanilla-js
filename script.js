@@ -2,31 +2,25 @@ const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
 const divImages = document.querySelector("div.images");
 
-const imageWidth = 100;
+const imageWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--image-width"))
 let currentIndex = 0;
-
 let blockButtons = false
 
 const images = [
-  `//source.unsplash.com/${imageWidth}x100?apples`,
-  `//source.unsplash.com/${imageWidth}x100?bananas`,
-  `//source.unsplash.com/${imageWidth}x100?cherries`,
+  `//source.unsplash.com/${imageWidth}x${imageWidth}?apples`,
+  `//source.unsplash.com/${imageWidth}x${imageWidth}?bananas`,
+  `//source.unsplash.com/${imageWidth}x${imageWidth}?cherries`,
 ];
 
 // place images ABSOLUTELY in container
 const imgElements = images.map((img, i) => {
   const imgElement = document.createElement("img");
   imgElement.src = img;
-  imgElement.style.left = i * imageWidth - 100 + "px";
+  imgElement.style.left = i * imageWidth - imageWidth + "px";
   divImages.appendChild(imgElement);
   return imgElement;
 });
 
-/**
- *      1|2|3 
- * =>     1|2|3
- * =>   3|1|2
- */
 btnPrevious.addEventListener("click", () => {
 
   if(blockButtons) return
@@ -43,9 +37,9 @@ btnPrevious.addEventListener("click", () => {
   lastItem.style.left = -imageWidth + "px"
 
   setTimeout(() => {
-    lastItem.style.transition = "1s";
+    lastItem.style.transition = ".7s";
     blockButtons = false
-  }, 1000)
+  }, 800)
 
   // move element to FIRST position in array
   const firstItemNew = imgElements.pop()
@@ -67,9 +61,9 @@ btnNext.addEventListener("click", () => {
   firstItem.style.transition = "none";
   firstItem.style.left = (imgElements.length-2)*imageWidth + "px";
   setTimeout(() => {
-    firstItem.style.transition = "1s";
+    firstItem.style.transition = ".7s";
     blockButtons = false
-  }, 1000)
+  }, 800)
 
   // move element to LAST position in array
   const lastItemNew = imgElements.shift();

@@ -12,10 +12,17 @@
       padding: 0;
     }
 
+    body {
+      background-color: rgb(25, 16, 83);
+      color: white;
+    }
+
     :root {
-      --image-width: 100px;
-      --image-height: 100px;
-      --image-count: 3;
+      --image-width: 150px;
+    }
+
+    h2 {
+      text-align: center;
     }
 
     .viewbox {
@@ -23,21 +30,23 @@
       width: var(--image-width);      
       border: 2px solid #aaa;
       overflow: hidden;
+      /* border: 1px solid #ccc; */
+      border-radius: 20px;
     }
 
     .images {
-      /* width: calc(var(--image-width)*var(--image-count)); */
       position: relative;
-      height: var(--image-height);
+      height: var(--image-width);
       display: flex;
     }
     .images img {
       position: absolute;
       top: 0;
-      transition: 1s;
+      transition: .7s;
     }
 
     .actions {
+      padding: 10px;
       text-align: center;
     }
     .actions button {
