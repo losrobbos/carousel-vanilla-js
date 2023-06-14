@@ -2,11 +2,12 @@ const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
 const divImages = document.querySelector("div.images");
 
+// config values (grab from CSS variables)
 const config = getComputedStyle(document.documentElement)
 const imageWidth = parseInt(config.getPropertyValue("--image-width"))
 const imageHeight = parseInt(config.getPropertyValue("--image-height"))
 const transition = config.getPropertyValue("--transition")
-let currentIndex = 0;
+
 let blockButtons = false
 
 const images = [
