@@ -13,12 +13,17 @@
     }
 
     body {
+      display: grid;
+      place-items: center;
       background-color: rgb(25, 16, 83);
       color: white;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
 
     :root {
-      --image-width: 150px;
+      --image-width: 300px;
+      --image-height: 200px;
+      --transition: .3s;
     }
 
     h2 {
@@ -39,10 +44,11 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      height: 20px;
+      /* height: 20px; */
+      font-size: 2rem;
       /* top: 0;
       bottom: 0; */
-      opacity: 0.5;
+      opacity: 0.3;
       z-index: 1;
     }
     .viewbox button:nth-of-type(1) {
@@ -55,13 +61,13 @@
 
     .images {
       position: relative;
-      height: var(--image-width);
+      height: var(--image-height);
       display: flex;
     }
     .images img {
       position: absolute;
       top: 0;
-      transition: .7s;
+      transition: var(--transition);
     }
 
     .actions {
@@ -77,7 +83,7 @@
 </head>
 <body>
 
-  <h2>Round & round & round...</h2>
+  <h2>Round & Round & Round...</h2>
  
   <div class="carousel">
 

@@ -2,14 +2,17 @@ const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
 const divImages = document.querySelector("div.images");
 
-const imageWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--image-width"))
+const config = getComputedStyle(document.documentElement)
+const imageWidth = parseInt(config.getPropertyValue("--image-width"))
+const imageHeight = parseInt(config.getPropertyValue("--image-height"))
+const transition = config.getPropertyValue("--transition")
 let currentIndex = 0;
 let blockButtons = false
 
 const images = [
-  `//source.unsplash.com/${imageWidth}x${imageWidth}?apples`,
-  `//source.unsplash.com/${imageWidth}x${imageWidth}?bananas`,
-  `//source.unsplash.com/${imageWidth}x${imageWidth}?cherries`,
+  `//source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
+  `//source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
+  `//source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
 ];
 
 // place images ABSOLUTELY in container
@@ -21,10 +24,9 @@ const imgElements = images.map((img, i) => {
   return imgElement;
 });
 
-btnPrevious.addEventListener("click", () => {
-
-  if(blockButtons) return
-  blockButtons = true
+const slidePrevious = () => {
+  if (blockButtons) return;
+  blockButtons = true;
 
   // move ALL images one image width to the RIGHT
   imgElements.forEach((img, i) => {
@@ -32,21 +34,21 @@ btnPrevious.addEventListener("click", () => {
     img.style.left = parseInt(left) + imageWidth + "px";
   });
   // move LAST item to first position
-  const lastItem = imgElements[imgElements.length-1]
+  const lastItem = imgElements[imgElements.length - 1];
   lastItem.style.transition = "none";
-  lastItem.style.left = -imageWidth + "px"
+  lastItem.style.left = -imageWidth + "px";
 
   setTimeout(() => {
-    lastItem.style.transition = ".7s";
-    blockButtons = false
-  }, 800)
+    lastItem.style.transition = transition;
+    blockButtons = false;
+  }, 800);
 
   // move element to FIRST position in array
-  const firstItemNew = imgElements.pop()
-  imgElements.unshift(firstItemNew)
-});
+  const firstItemNew = imgElements.pop();
+  imgElements.unshift(firstItemNew);
+};
 
-btnNext.addEventListener("click", () => {
+const slideNext = () => {
   if (blockButtons) return;
   blockButtons = true;
 
@@ -59,13 +61,23 @@ btnNext.addEventListener("click", () => {
   // move FIRST item to last position in container
   const firstItem = imgElements[0];
   firstItem.style.transition = "none";
-  firstItem.style.left = (imgElements.length-2)*imageWidth + "px";
+  firstItem.style.left = (imgElements.length - 2) * imageWidth + "px";
+
   setTimeout(() => {
-    firstItem.style.transition = ".7s";
-    blockButtons = false
-  }, 800)
+    firstItem.style.transition = transition;
+    blockButtons = false;
+  }, 800);
 
   // move element to LAST position in array
   const lastItemNew = imgElements.shift();
   imgElements.push(lastItemNew);
-});
+};
+
+// make buttons work...
+btnPrevious.addEventListener("click", slidePrevious);
+btnNext.addEventListener("click", slideNext);
+
+// autoslide...
+setInterval(() => {
+  slideNext()
+},3000)
