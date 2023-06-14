@@ -13,6 +13,7 @@ const images = [
   `//source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
   `//source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
   `//source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
+  `//source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
 ];
 
 // place images ABSOLUTELY in container
