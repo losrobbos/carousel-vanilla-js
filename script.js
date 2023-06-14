@@ -34,11 +34,12 @@ const slidePrevious = () => {
     const { left } = getComputedStyle(img);
     img.style.left = parseInt(left) + imageWidth + "px";
   });
-  // move LAST item to first position
+  // move LAST image to first position in container
   const lastItem = imgElements[imgElements.length - 1];
-  lastItem.style.transition = "none";
+  lastItem.style.transition = "none"; // make move invisible to user
   lastItem.style.left = -imageWidth + "px";
 
+  // allow user to slide again in round about a second
   setTimeout(() => {
     lastItem.style.transition = transition;
     blockButtons = false;
@@ -61,9 +62,10 @@ const slideNext = () => {
 
   // move FIRST item to last position in container
   const firstItem = imgElements[0];
-  firstItem.style.transition = "none";
+  firstItem.style.transition = "none"; // make move invisible to user
   firstItem.style.left = (imgElements.length - 2) * imageWidth + "px";
 
+  // allow user to slide again in round about a second
   setTimeout(() => {
     firstItem.style.transition = transition;
     blockButtons = false;
