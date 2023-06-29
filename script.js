@@ -67,7 +67,10 @@ iconElements.forEach((icon, i) => {
 });
 
 const setIndex = (inc) => {
-  if (currentIndex + inc >= imgElements.length) 
+  if(currentIndex + inc === imgElements.length) {
+    currentIndex = 0
+  }
+  else if (currentIndex + inc > imgElements.length) 
     currentIndex -= inc;
   else {
     currentIndex += inc
@@ -115,7 +118,6 @@ const slideNext = (inc = 1) => {
       firstItem.style.transition = "none"
       firstItem.style.zIndex = -1
       const newLeft = (imgElements.length - 1 - i) * imageWidth + "px";
-      console.log(i, newLeft)
       firstItem.style.left = newLeft;
 
       // move element to LAST position in array
