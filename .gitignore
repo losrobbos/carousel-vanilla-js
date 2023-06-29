@@ -1,2 +1,4 @@
 .vercel
 images/*.jpg
+images/*.png
+images/*.gif

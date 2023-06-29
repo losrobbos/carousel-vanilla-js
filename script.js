@@ -15,10 +15,6 @@ console.log(transitionInt)
 let blockButtons = false
 
 const images = [
-  // "red",
-  // "purple",
-  // "orange",
-  // "green",
   `./images/ananas.resized.jpg`,
   `./images/bananas.resized.jpg`,
   `./images/berries.resized.jpg`,
