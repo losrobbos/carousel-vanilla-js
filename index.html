@@ -16,7 +16,6 @@
       display: grid;
       place-items: center;
       height: 100vh;
-      /* background-color: rgb(25, 16, 83); */
       background-color: #282C34;
       color: white;
       font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -26,7 +25,8 @@
     :root {
       --image-width: 300px;
       --image-height: 200px;
-      --transition: 1s;
+      --transition-number: 1s;
+      --transition: left var(--transition-number);
     }
 
     h2 {
@@ -39,7 +39,6 @@
       width: var(--image-width);
       border: 2px solid #aaa;
       overflow: hidden;
-      /* border: 1px solid #ccc; */
       border-radius: 20px;
     }
 
@@ -47,10 +46,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      /* height: 20px; */
       font-size: 2rem;
-      /* top: 0;
-      bottom: 0; */
       opacity: 0.3;
       z-index: 1;
     }
@@ -67,7 +63,6 @@
     .images {
       position: relative;
       height: var(--image-height);
-      display: flex;
     }
 
     .images>* {

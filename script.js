@@ -9,6 +9,8 @@ const config = getComputedStyle(document.documentElement)
 const imageWidth = parseInt(config.getPropertyValue("--image-width"))
 const imageHeight = parseInt(config.getPropertyValue("--image-height"))
 const transition = config.getPropertyValue("--transition")
+const transitionInt = parseInt(config.getPropertyValue("--transition-number")) * 1100
+console.log(transitionInt)
 
 let blockButtons = false
 
@@ -23,6 +25,14 @@ const images = [
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
 ];
 
+const resetItem = (item) => {
+  // allow user to slide again in round about a second
+  setTimeout(() => {
+    item.style.removeProperty("z-index");
+    blockButtons = false;
+  }, transitionInt);
+}
+
 // place images ABSOLUTELY in container
 const imgElements = images.map((img, i) => {
   // const imgElement = document.createElement("img");
@@ -34,31 +44,31 @@ const imgElements = images.map((img, i) => {
   return imgElement;
 });
 
+// click LEFT
 const slidePrevious = () => {
   if (blockButtons) return;
   blockButtons = true;
 
-  // move ALL images one image width to the RIGHT
+  // move ALL images one image width to the RIGHT (except LAST item)
   imgElements.forEach((img, i) => {
     const { left } = getComputedStyle(img);
-    img.style.left = parseInt(left) + imageWidth + "px";
+    const leftNew = parseInt(left) + imageWidth + "px";
+    img.style.left = leftNew
   });
-  // move LAST image to first position in container
+  // move LAST image to FIRST position in container
   const lastItem = imgElements[imgElements.length - 1];
-  lastItem.style.transition = "none"; // make move invisible to user
-  lastItem.style.left = -imageWidth + "px";
+  lastItem.style.zIndex = -1
+  const leftNew = -imageWidth + "px"
+  lastItem.style.left = leftNew;
 
-  // allow user to slide again in round about a second
-  setTimeout(() => {
-    lastItem.style.transition = transition;
-    blockButtons = false;
-  }, 800);
+  resetItem(lastItem)
 
   // move element to FIRST position in array
-  const firstItemNew = imgElements.pop();
-  imgElements.unshift(firstItemNew);
+  const firstItemNew = imgElements.pop(); // remove last array item
+  imgElements.unshift(firstItemNew); // add removed item at begin of array
 };
 
+// click RIGHT
 const slideNext = () => {
   if (blockButtons) return;
   blockButtons = true;
@@ -71,14 +81,10 @@ const slideNext = () => {
 
   // move FIRST item to last position in container
   const firstItem = imgElements[0];
-  firstItem.style.transition = "none"; // make move invisible to user
+  firstItem.style.zIndex = -1
   firstItem.style.left = (imgElements.length - 2) * imageWidth + "px";
 
-  // allow user to slide again in round about a second
-  setTimeout(() => {
-    firstItem.style.transition = transition;
-    blockButtons = false;
-  }, 800);
+  resetItem(firstItem)
 
   // move element to LAST position in array
   const lastItemNew = imgElements.shift();
