@@ -149,21 +149,20 @@ const slidePrevious = (inc = 1) => {
       const leftNew = -imageWidth * (i+1) + "px";
       lastItem.style.left = leftNew;
 
-      blockButtons = false;
-
       // move element to FIRST position in array
       const firstItemNew = imgElements.pop(); // remove last array item
       imgElements.unshift(firstItemNew); // add removed item at begin of array
     }
+    blockButtons = false;
   }, transitionInt);
 };
 
 
 // make buttons work...
-btnPrevious.addEventListener("click", () => slidePrevious(1));
-btnNext.addEventListener("click", () => slideNext(1));
+btnPrevious.addEventListener("click", () => slidePrevious());
+btnNext.addEventListener("click", () => slideNext());
 
 // autoslide...
-// setInterval(() => {
-//   slideNext()
-// },3000)
+setInterval(() => {
+  slideNext()
+},3000)
