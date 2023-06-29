@@ -15,30 +15,26 @@ console.log(transitionInt)
 let blockButtons = false
 
 const images = [
-  "red",
-  "purple",
-  "orange",
-  "green",
+  // "red",
+  // "purple",
+  // "orange",
+  // "green",
+  `./images/ananas.resized.jpg`,
+  `./images/bananas.resized.jpg`,
+  `./images/berries.resized.jpg`,
+  `./images/cherries.resized.jpg`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
 ];
 
-const resetItem = (item) => {
-  // allow user to slide again in round about a second
-  setTimeout(() => {
-    item.style.removeProperty("z-index");
-    blockButtons = false;
-  }, transitionInt);
-}
-
 // place images ABSOLUTELY in container
 const imgElements = images.map((img, i) => {
-  // const imgElement = document.createElement("img");
-  // imgElement.src = img;
-  const imgElement = document.createElement("div");
-  imgElement.style.backgroundColor = img;
+  const imgElement = document.createElement("img");
+  imgElement.src = img;
+  // const imgElement = document.createElement("div");
+  // imgElement.style.backgroundColor = img;
   imgElement.style.left = i * imageWidth - imageWidth + "px";
   divImages.appendChild(imgElement);
   return imgElement;
@@ -89,6 +85,15 @@ const slideNext = () => {
   // move element to LAST position in array
   const lastItemNew = imgElements.shift();
   imgElements.push(lastItemNew);
+};
+
+// reset CSS of moved item and unblock actions
+const resetItem = (item) => {
+  // allow user to slide again in round about a second
+  setTimeout(() => {
+    item.style.removeProperty("z-index");
+    blockButtons = false;
+  }, transitionInt);
 };
 
 // make buttons work...
