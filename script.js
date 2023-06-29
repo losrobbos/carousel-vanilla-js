@@ -44,13 +44,8 @@ iconElements.forEach((icon, i) => {
   icon.addEventListener("click", () => {
     const newIndex = i;
     const diff = newIndex - currentIndex;
-    console.log({ currentIndex, newIndex, diff });
     // cases:
     // if 0 => we do nothing
-    // if from LAST to FIRST or vice versa => we move just ONE!
-    // if -1 => we move one BACK
-    // if 1 => we move one FORWARD
-    // if something else => we move X FORWARD
     if (diff === 0) return;
 
     // from first to last => go one back
@@ -62,36 +57,73 @@ iconElements.forEach((icon, i) => {
       slideNext();
     }
 
+    // just one diff => use normal slidiing
     if (diff === -1) slidePrevious();
-    if (diff === 1) {
-      slideNext();
-    }
-    // move "diff" steps
-    if(diff > 0) {
-      console.log(diff, "forwards")
-      slideNext(diff);
-    }
-    else {
-      console.log(diff, "back");
-      slidePrevious(Math.abs(diff))
-    }
+    if (diff === 1) slideNext();
+
+    // move "X" steps to item user has chosen
+    slideNext(Math.abs(diff));
   });
 });
 
 const setIndex = (inc) => {
-  currentIndex += inc;
+  if (currentIndex + inc >= imgElements.length) 
+    currentIndex -= inc;
+  else {
+    currentIndex += inc
+  }
   if (currentIndex < 0) {
     currentIndex = imgElements.length - 1;
-  } else if (currentIndex === imgElements.length) {
-    currentIndex = 0;
   }
-  // color selected icon (at index position)
+
+  // color the selected icon (at index position)
   iconElements.forEach((icon, i) => {
     if (i === currentIndex) {
       return icon.classList.add("active");
     }
     icon.classList.remove("active");
   });
+};
+
+const slideImages = (inc) => {
+  imgElements.forEach((img, i) => {
+    img.style.transition = transition;
+    img.style.removeProperty("z-index");
+    const { left } = getComputedStyle(img);
+    const leftNew = parseInt(left) + imageWidth * inc + "px";
+    img.style.left = leftNew;
+  });
+
+}
+
+// click RIGHT
+const slideNext = (inc = 1) => {
+  if (blockButtons) return;
+  blockButtons = true;
+
+  setIndex(inc);
+
+  // slide all images inc times to the LEFT
+  slideImages(-inc)
+
+  // WAIT until all items are MOVED smoothly
+  // THEN move FIRST X items to last position in container (AFTER move left is finished!)
+  setTimeout(() => {
+    for (let i = inc; i > 0; i--) {
+      const firstItem = imgElements[0];
+      // firstItem.style.display = "none";
+      firstItem.style.transition = "none"
+      firstItem.style.zIndex = -1
+      const newLeft = (imgElements.length - 1 - i) * imageWidth + "px";
+      console.log(i, newLeft)
+      firstItem.style.left = newLeft;
+
+      // move element to LAST position in array
+      const lastItemNew = imgElements.shift();
+      imgElements.push(lastItemNew);
+    }
+    blockButtons = false;
+  }, transitionInt);
 };
 
 // click LEFT
@@ -101,63 +133,29 @@ const slidePrevious = (inc = 1) => {
 
   setIndex(-inc);
 
-  // move ALL images X image widths to the RIGHT
-  imgElements.forEach((img, i) => {
-    const { left } = getComputedStyle(img);
-    const leftNew = parseInt(left) + imageWidth * inc + "px";
-    img.style.left = leftNew;
-  });
+  // slide all images inc times to the RIGHT
+  slideImages(inc);
 
-  // move LAST X images to FIRST position in container
-  const lastItem = imgElements[imgElements.length - 1];
-  // lastItem.style.zIndex = -1
-  lastItem.style.display = "none";
-  const leftNew = -imageWidth + "px";
-  lastItem.style.left = leftNew;
-
-  resetItem(lastItem);
-
-  // move element to FIRST position in array
-  const firstItemNew = imgElements.pop(); // remove last array item
-  imgElements.unshift(firstItemNew); // add removed item at begin of array
-};
-
-// click RIGHT
-const slideNext = (inc = 1) => {
-  if (blockButtons) return;
-  blockButtons = true;
-
-  setIndex(inc);
-
-  // move ALL images X image widths to the LEFT
-  imgElements.forEach((img, i) => {
-    const { left } = getComputedStyle(img);
-    img.style.left = parseInt(left) - imageWidth * inc + "px";
-  });
-
-  // move FIRST X items to last position in container (AFTER move left is finished!)
-  const firstItem = imgElements[0];
-  firstItem.style.display = "none";
-  // firstItem.style.zIndex = -1
-  const newLeft = (imgElements.length - 2 - inc+1) * imageWidth + "px";
-  firstItem.style.left = newLeft;
-
-  resetItem(firstItem);
-
-  // move element to LAST position in array
-  const lastItemNew = imgElements.shift();
-  imgElements.push(lastItemNew);
-};
-
-// reset CSS of moved item and unblock actions
-const resetItem = (item) => {
-  // allow user to slide again in round about a second
+  // WAIT until all items were moved
+  // then move LAST X images to FIRST position in container (AFTER items have moved)
   setTimeout(() => {
-    item.style.display = "grid";
-    // item.style.removeProperty("z-index");
-    blockButtons = false;
+    for (let i = 0; i < inc; i++) {
+      const lastItem = imgElements[imgElements.length - 1];
+      lastItem.style.transition = "none";
+      lastItem.style.zIndex = -1;
+      // lastItem.style.display = "none";
+      const leftNew = -imageWidth * (i+1) + "px";
+      lastItem.style.left = leftNew;
+
+      blockButtons = false;
+
+      // move element to FIRST position in array
+      const firstItemNew = imgElements.pop(); // remove last array item
+      imgElements.unshift(firstItemNew); // add removed item at begin of array
+    }
   }, transitionInt);
 };
+
 
 // make buttons work...
 btnPrevious.addEventListener("click", () => slidePrevious(1));
