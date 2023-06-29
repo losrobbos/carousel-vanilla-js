@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carousel</title>
   <style>
-
     * {
       box-sizing: border-box;
       padding: 0;
@@ -14,28 +14,29 @@
 
     body {
       display: grid;
-	  place-items: center;
+      place-items: center;
       height: 100vh;
       /* background-color: rgb(25, 16, 83); */
       background-color: #282C34;
       color: white;
       font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      overflow: hidden;
     }
 
     :root {
       --image-width: 300px;
       --image-height: 200px;
-      --transition: .3s;
+      --transition: 1s;
     }
 
     h2 {
       text-align: center;
     }
 
-    .viewbox {      
+    .viewbox {
       margin: auto;
       position: relative;
-      width: var(--image-width);      
+      width: var(--image-width);
       border: 2px solid #aaa;
       overflow: hidden;
       /* border: 1px solid #ccc; */
@@ -53,9 +54,11 @@
       opacity: 0.3;
       z-index: 1;
     }
+
     .viewbox button:nth-of-type(1) {
       left: 0;
     }
+
     .viewbox button:nth-of-type(2) {
       right: 0;
     }
@@ -66,9 +69,12 @@
       height: var(--image-height);
       display: flex;
     }
-    .images img {
+
+    .images>* {
       position: absolute;
       top: 0;
+      width: var(--image-width);
+      height: var(--image-height);
       transition: var(--transition);
     }
 
@@ -76,28 +82,57 @@
       padding: 10px;
       text-align: center;
     }
+
     .actions button {
       padding: 0 10px;
     }
 
+    .icons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      background-color: aquamarine;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    .icon:hover {
+      cursor: pointer;
+    }
   </style>
   <script defer src="./script.js"></script>
 </head>
+
 <body>
 
   <main>
-  <h2>Round & Round & Round...</h2>
- 
-  <div class="carousel">
+    <h2>Round & Round & Round...</h2>
 
-    <div class="viewbox">
-      <div class="images"></div>
-      <button class="btn-previous">&lt;</button>
-      <button class="btn-next">&gt;</button>
+    <div class="carousel">
+
+      <div class="viewbox">
+        <div class="images"></div>
+        <button class="btn-previous">&lt;</button>
+        <button class="btn-next">&gt;</button>
+      </div>
+      <div class="icons">
+        <div class="icon">1</div>
+        <div class="icon">2</div>
+        <div class="icon">3</div>
+        <div class="icon">4</div>
+        <div class="icon">5</div>
+      </div>
+
     </div>
-
-  </div>
-</main>
+  </main>
 
 </body>
+
 </html>

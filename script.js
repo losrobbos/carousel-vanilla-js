@@ -1,6 +1,8 @@
+// DOM elements
 const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
 const divImages = document.querySelector("div.images");
+const icons = document.querySelector(".icons").children;
 
 // config values (grab from CSS variables)
 const config = getComputedStyle(document.documentElement)
@@ -11,16 +13,22 @@ const transition = config.getPropertyValue("--transition")
 let blockButtons = false
 
 const images = [
-  `//source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
-  `//source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
-  `//source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
-  `//source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
+  "red",
+  "purple",
+  "orange",
+  "green",
+  // `https://source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
+  // `https://source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
+  // `https://source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
+  // `https://source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
 ];
 
 // place images ABSOLUTELY in container
 const imgElements = images.map((img, i) => {
-  const imgElement = document.createElement("img");
-  imgElement.src = img;
+  // const imgElement = document.createElement("img");
+  // imgElement.src = img;
+  const imgElement = document.createElement("div");
+  imgElement.style.backgroundColor = img;
   imgElement.style.left = i * imageWidth - imageWidth + "px";
   divImages.appendChild(imgElement);
   return imgElement;
@@ -82,6 +90,6 @@ btnPrevious.addEventListener("click", slidePrevious);
 btnNext.addEventListener("click", slideNext);
 
 // autoslide...
-setInterval(() => {
-  slideNext()
-},3000)
+// setInterval(() => {
+//   slideNext()
+// },3000)
