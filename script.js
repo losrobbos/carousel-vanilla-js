@@ -10,8 +10,8 @@ const imageWidth = parseInt(config.getPropertyValue("--image-width"))
 const imageHeight = parseInt(config.getPropertyValue("--image-height"))
 const transition = config.getPropertyValue("--transition")
 const transitionInt = parseInt(config.getPropertyValue("--transition-number")) * 1100
-console.log(transitionInt)
 
+let currentIndex = 0;
 let blockButtons = false
 
 const images = [
@@ -26,6 +26,7 @@ const images = [
 ];
 
 // place images ABSOLUTELY in container
+// const labels = [4,1,2,3]
 const imgElements = images.map((img, i) => {
   const imgElement = document.createElement("img");
   imgElement.src = img;
@@ -36,10 +37,47 @@ const imgElements = images.map((img, i) => {
   return imgElement;
 });
 
+// create icon handlers 
+Array.from(icons).forEach((icon, i) => {
+  icon.addEventListener("click", () => {
+    const newIndex = i
+    console.log("We move img from ", currentIndex, "to", newIndex)
+    const diff = newIndex - currentIndex;
+    console.log("Diff: ", diff);
+    // cases: 
+    // if 0 => we do nothing
+    // if -1 => we move one BACK
+    // if something else => we move FORWARD
+    if(diff === 0) return
+    if(diff === -1) 
+      slidePrevious()
+    if(diff === 1) {
+      slideNext()
+    }
+    // move "diff" steps forward (!)
+    console.log("Slide multiple!")
+    slideNext()
+    slideNext()
+  })
+})
+
+const setIndex = (inc) => {
+  currentIndex += inc
+  if(currentIndex < 0) {
+    currentIndex = imgElements.length -1
+  }
+  else if(currentIndex === imgElements.length) {
+    currentIndex = 0
+  }
+}
+
 // click LEFT
 const slidePrevious = () => {
   if (blockButtons) return;
   blockButtons = true;
+
+  setIndex(-1)
+  console.log("New position:", currentIndex);
 
   // move ALL images one image width to the RIGHT (except LAST item)
   imgElements.forEach((img, i) => {
@@ -64,6 +102,9 @@ const slidePrevious = () => {
 const slideNext = () => {
   if (blockButtons) return;
   blockButtons = true;
+
+  setIndex(1)
+  console.log("New position:", currentIndex)
 
   // move ALL images one image width to the LEFT
   imgElements.forEach((img, i) => {
