@@ -12,6 +12,14 @@
       padding: 0;
     }
 
+    :root {
+      --image-width: 100px;
+      --image-height: 100px;
+      --image-count: 3;
+      --transition-number: 0.7s;
+      --transition: left var(--transition-number);
+    }
+
     body {
       display: grid;
       place-items: center;
@@ -23,13 +31,6 @@
       overflow: hidden;
     }
 
-    :root {
-      --image-width: 300px;
-      --image-height: 200px;
-      --transition-number: 1s;
-      --transition: left var(--transition-number);
-    }
-
     h2 {
       text-align: center;
     }
@@ -37,10 +38,11 @@
     .viewbox {
       margin: auto;
       position: relative;
+      height: var(--image-height);
       width: var(--image-width);
       border: 2px solid #aaa;
       border-radius: 20px;
-      overflow: hidden;
+      /* overflow: hidden; */
     }
 
     .viewbox button {
@@ -62,18 +64,25 @@
 
 
     .images {
-      position: relative;
-      height: var(--image-height);
+      position: absolute;
+      display: flex;
+      top: 0;
+      width: calc(var(--image-width)*var(--image-count));
+      height: 100%;
+      transition: var(--transition);
+      border: 1px solid #ccc;
+    }
+
+    .images:nth-of-type(1) {
+      left: calc(-1*var(--image-width)*var(--image-count));
+    }
+    .images:nth-of-type(2) {
+      left: 0;
     }
 
     .images>* {
-      position: absolute;
-      top: 0;
       width: var(--image-width);
-      height: var(--image-height);
-      transition: var(--transition);
-      display: grid; 
-      place-items: center;
+      height: 100%;
       font-size: 2rem;
       background-color: #ccc;
     }
@@ -123,6 +132,7 @@
 
       <div class="viewbox">
         <div class="images"></div>
+        <div class="images"></div>
         <button class="btn-previous">&lt;</button>
         <button class="btn-next">&gt;</button>
       </div>
@@ -130,7 +140,7 @@
         <div class="icon active">1</div>
         <div class="icon">2</div>
         <div class="icon">3</div>
-        <div class="icon">4</div>
+        <!-- <div class="icon">4</div> -->
       </div>
 
     </div>
