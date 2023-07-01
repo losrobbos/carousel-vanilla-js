@@ -23,7 +23,7 @@ const images = [
   `./images/ananas.resized.jpg`,
   `./images/bananas.resized.jpg`,
   `./images/berries.resized.jpg`,
-  // `./images/cherries.resized.jpg`,
+  `./images/cherries.resized.jpg`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?apples`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?bananas`,
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?cherries`,
