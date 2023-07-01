@@ -39,8 +39,6 @@ images.forEach((img, i) => {
   });
 });
 
-
-
 // create icon handlers
 iconElements.forEach((icon, iconIndex) => {
   icon.addEventListener("click", () => {
@@ -63,7 +61,7 @@ const setCurrentItem = (inc) => {
   // moved before begin? go to LAST item and switch container
   if (itemIndexCurrent < 0) {
     itemIndexCurrent = images.length - 1;
-    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0
+    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
   }
   // moved after end? go to FIRST item and switch container
   else if (itemIndexCurrent === images.length) {
@@ -80,12 +78,7 @@ const setCurrentItem = (inc) => {
   });
 };
 
-const swapContainers = () => {
-  // exchange position of container depending on index
-};
-
 const slideContainers = (inc) => {
-  
   // shift containers in direction user clicked
   imgContainers.forEach((container, i) => {
     container.style.transition = transition;
@@ -99,55 +92,44 @@ const slideContainers = (inc) => {
   // update selected item icon for user
   setCurrentItem(-inc);
 
-  // TODO check if index at outer bound => then we shift containers
-  console.log({ containerIndexCurrent, itemIndexCurrent })
-
-  // outer LEFT bound? 
+  // outer LEFT bound?
   if (itemIndexCurrent === 0 && containerIndexCurrent === 0) {
-    console.log("LEFT BOUND reached");
-
-    // WAIT until containers have locked in (transition finished)
     // move container 2 LEFT to container 1 and swap container index
-    setTimeout(() => {
-      const container1Style = getComputedStyle(imgContainer1);
-      const leftNew = parseInt(container1Style.left) - parseInt(container1Style.width) + "px" 
-      imgContainer2.style.transition = "none";
-      imgContainer2.style.left = leftNew
-
-      // swap containers
-      containerIndexCurrent = 1;
-      const temp = imgContainer1
-      imgContainer1 = imgContainer2
-      imgContainer2 = temp
-    },transitionInt)
+    swapContainers();
   }
   // outer RIGHT bound?
   else if (
     itemIndexCurrent === images.length - 1 &&
     containerIndexCurrent === 1
   ) {
-    console.log("RIGHT BOUND reached");
-
-    // WAIT until containers have locked in (transition finished)
     // move container 1 RIGHT to container 2 and swap container index
-    setTimeout(() => {
-      const container2Style = getComputedStyle(imgContainer2);
-      const leftNew =
-        parseInt(container2Style.left) + parseInt(container2Style.width) + "px";
-      // prevent transition
-      imgContainer1.style.transition = "none";
-      imgContainer1.style.left = leftNew;
-
-      // swap containers
-      containerIndexCurrent = 0;
-      const temp = imgContainer1;
-      imgContainer1 = imgContainer2;
-      imgContainer2 = temp;
-    }, transitionInt);
+    swapContainers();
   }
+};
 
-  // once shift is done => invert container indexes!!
+const swapContainers = () => {
+  // WAIT until containers have locked in (transition finished)
+  setTimeout(() => {
+    const containerStyle = getComputedStyle(
+      imgContainers[containerIndexCurrent]
+    );
+    // calculate new container position next to other one
+    const leftNew =
+      parseInt(containerStyle.left) +
+      (containerIndexCurrent === 0 ? -1 : 1) * parseInt(containerStyle.width) +
+      "px";
 
+    // perform move (prevent transition)
+    const containerOther = imgContainers[containerIndexCurrent === 0 ? 1 : 0];
+    containerOther.style.transition = "none";
+    containerOther.style.left = leftNew;
+
+    // swap containers in array
+    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
+    const temp = imgContainers[0];
+    imgContainers[0] = imgContainers[1];
+    imgContainers[1] = temp;
+  }, transitionInt);
 };
 
 // click RIGHT arrow icon
@@ -181,6 +163,6 @@ btnPrevious.addEventListener("click", () => slidePrevious());
 btnNext.addEventListener("click", () => slideNext());
 
 // autoslide...
-// setInterval(() => {
-//   slideNext()
-// },3000)
+setInterval(() => {
+  slideNext()
+},3000)
