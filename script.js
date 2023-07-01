@@ -3,8 +3,8 @@ const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
 const icons = document.querySelector(".icons").children;
 const iconElements = Array.from(icons);
-const imgContainer1 = document.querySelector("div.images:nth-of-type(1)");
-const imgContainer2 = document.querySelector("div.images:nth-of-type(2)");
+let imgContainer1 = document.querySelector("div.images:nth-of-type(1)");
+let imgContainer2 = document.querySelector("div.images:nth-of-type(2)");
 const imgContainers = [imgContainer1, imgContainer2];
 
 // config values (grab from CSS variables)
@@ -13,7 +13,7 @@ const imageWidth = parseInt(config.getPropertyValue("--image-width"));
 const imageHeight = parseInt(config.getPropertyValue("--image-height"));
 const transition = config.getPropertyValue("--transition");
 const transitionInt =
-  parseFloat(config.getPropertyValue("--transition-number")) * 1100;
+  parseFloat(config.getPropertyValue("--transition-number")) * 1050;
 
 let containerIndexCurrent = 1;
 let itemIndexCurrent = 0;
@@ -60,16 +60,15 @@ iconElements.forEach((icon, iconIndex) => {
 const setCurrentItem = (inc) => {
   itemIndexCurrent += inc;
 
-  // TODO: evaluate if we moved into a different CONTAINER!
-  // that basically ALWAYS happens if we move outside the bounds!
-
-  // moved before begin? go to LAST item
+  // moved before begin? go to LAST item and switch container
   if (itemIndexCurrent < 0) {
     itemIndexCurrent = images.length - 1;
+    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0
   }
-  // moved after end? go to FIRST item
+  // moved after end? go to FIRST item and switch container
   else if (itemIndexCurrent === images.length) {
     itemIndexCurrent = 0;
+    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
   }
 
   // color the selected position icon
@@ -86,9 +85,8 @@ const swapContainers = () => {
 };
 
 const slideContainers = (inc) => {
-
-  setCurrentItem(-inc);
-
+  
+  // shift containers in direction user clicked
   imgContainers.forEach((container, i) => {
     container.style.transition = transition;
     container.style.removeProperty("z-index");
@@ -97,8 +95,59 @@ const slideContainers = (inc) => {
     container.style.left = leftNew;
   });
 
-  // check if index at outer bound => then we shift containers
+  // determine new current item (depending on last move)
+  // update selected item icon for user
+  setCurrentItem(-inc);
+
+  // TODO check if index at outer bound => then we shift containers
   console.log({ containerIndexCurrent, itemIndexCurrent })
+
+  // outer LEFT bound? 
+  if (itemIndexCurrent === 0 && containerIndexCurrent === 0) {
+    console.log("LEFT BOUND reached");
+
+    // WAIT until containers have locked in (transition finished)
+    // move container 2 LEFT to container 1 and swap container index
+    setTimeout(() => {
+      const container1Style = getComputedStyle(imgContainer1);
+      const leftNew = parseInt(container1Style.left) - parseInt(container1Style.width) + "px" 
+      imgContainer2.style.transition = "none";
+      imgContainer2.style.left = leftNew
+
+      // swap containers
+      containerIndexCurrent = 1;
+      const temp = imgContainer1
+      imgContainer1 = imgContainer2
+      imgContainer2 = temp
+    },transitionInt)
+  }
+  // outer RIGHT bound?
+  else if (
+    itemIndexCurrent === images.length - 1 &&
+    containerIndexCurrent === 1
+  ) {
+    console.log("RIGHT BOUND reached");
+
+    // WAIT until containers have locked in (transition finished)
+    // move container 1 RIGHT to container 2 and swap container index
+    setTimeout(() => {
+      const container2Style = getComputedStyle(imgContainer2);
+      const leftNew =
+        parseInt(container2Style.left) + parseInt(container2Style.width) + "px";
+      // prevent transition
+      imgContainer1.style.transition = "none";
+      imgContainer1.style.left = leftNew;
+
+      // swap containers
+      containerIndexCurrent = 0;
+      const temp = imgContainer1;
+      imgContainer1 = imgContainer2;
+      imgContainer2 = temp;
+    }, transitionInt);
+  }
+
+  // once shift is done => invert container indexes!!
+
 };
 
 // click RIGHT arrow icon
