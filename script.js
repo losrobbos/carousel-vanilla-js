@@ -1,11 +1,10 @@
 // DOM elements
 const btnNext = document.querySelector("button.btn-next");
 const btnPrevious = document.querySelector("button.btn-previous");
-const icons = document.querySelector(".icons").children;
-const iconElements = Array.from(icons);
-let imgContainer1 = document.querySelector("div.images:nth-of-type(1)");
-let imgContainer2 = document.querySelector("div.images:nth-of-type(2)");
-const imgContainers = [imgContainer1, imgContainer2];
+const divImages = document.querySelector("div.images");
+
+const divIcons = document.querySelector(".icons");
+const iconElements = [];
 
 // config values (grab from CSS variables)
 const config = getComputedStyle(document.documentElement);
@@ -13,11 +12,7 @@ const imageWidth = parseInt(config.getPropertyValue("--image-width"));
 const imageHeight = parseInt(config.getPropertyValue("--image-height"));
 const transition = config.getPropertyValue("--transition");
 const transitionInt =
-  parseFloat(config.getPropertyValue("--transition-number")) * 1050;
-
-let containerIndexCurrent = 1;
-let itemIndexCurrent = 0;
-let blockButtons = false;
+  parseInt(config.getPropertyValue("--transition-number")) * 1100;
 
 const images = [
   `./images/ananas.resized.jpg`,
@@ -30,133 +25,146 @@ const images = [
   // `https://source.unsplash.com/${imageWidth}x${imageHeight}?mangos`,
 ];
 
-// place / duplicate images in both containers
-images.forEach((img, i) => {
-  imgContainers.forEach((container) => {
-    const imgElement = document.createElement("img");
-    imgElement.src = img;
-    container.appendChild(imgElement);
-  });
+let currentIndex = 0;
+let blockButtons = false;
+let imageIndexes = [0, 1, 2, 3];
+
+// place images ABSOLUTELY in container
+const imgElements = images.map((img, i) => {
+  // create image
+  const imgElement = document.createElement("img");
+  imgElement.src = img;
+  imgElement.style.left = i * imageWidth + "px";
+  divImages.appendChild(imgElement);
+
+  // create icon
+  const iconElement = document.createElement("div");
+  iconElement.innerText = i + 1;
+  iconElement.classList.add("icon");
+  // make first icon active
+  if (i == 0) iconElement.classList.add("active");
+  iconElements.push(iconElement);
+  divIcons.appendChild(iconElement);
+
+  return imgElement;
 });
+
+const updateIconActive = (itemIndex) => {
+  // color the selected icon (at index position)
+  iconElements.forEach((ico, i) => {
+    if (i === itemIndex) {
+      return ico.classList.add("active");
+    }
+    ico.classList.remove("active");
+  });
+};
 
 // create icon handlers
-iconElements.forEach((icon, iconIndex) => {
+iconElements.forEach((icon, itemIndex) => {
   icon.addEventListener("click", () => {
-    const diff = iconIndex - itemIndexCurrent;
-    // if we are already at item (diff == 0) => we do nothing
+    if (blockButtons) return;
+
+    updateIconActive(itemIndex);
+
+    // examples:
+    // new 2, current 0  => diff 2
+    // new 0, current 2 => diff -2
+    const diff = itemIndex - currentIndex;
+    console.log({ currentIndex, itemIndex, diff });
+
+    // if 0 => we do nothing
     if (diff === 0) return;
 
-    // move to new position X steps
-    if (diff > 0) slideNext(diff);
-    if (diff < 0) slidePrevious(Math.abs(diff));
+    // going forward: simply slide x steps forward
+    if (diff > 0) {
+      return slideNext(diff);
+    }
+
+    // move "X" steps to item user has chosen
+    slidePrevious(diff);
   });
 });
 
-/**
- * update item index + selected icon
- */
-const setCurrentItem = (inc) => {
-  itemIndexCurrent += inc;
-
-  // moved before begin? go to LAST item and switch container
-  if (itemIndexCurrent < 0) {
-    itemIndexCurrent = images.length - 1;
-    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
+const moveItem = (item, steps, doTransition = true) => {
+  if (doTransition) {
+    item.style.transition = transition;
+    item.style.removeProperty("z-index");
+  } else {
+    item.style.transition = "none";
+    item.style.zIndex = -1;
   }
-  // moved after end? go to FIRST item and switch container
-  else if (itemIndexCurrent === images.length) {
-    itemIndexCurrent = 0;
-    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
+  const { left } = getComputedStyle(item);
+  const leftNew = parseInt(left) + imageWidth * -1 * steps + "px";
+  item.style.left = leftNew;
+};
+
+const slideImages = (inc) => {
+  // block buttons => to prevent multi sliding
+  if (blockButtons) return;
+  blockButtons = true;
+
+  /**
+   * reordering is performed each time we move "out of bounds" (e.g. below index 0)
+   * then we reorder the items into their naturals order after the move
+   */
+  let reorderItems = false;
+
+  // update index
+  currentIndex += inc;
+
+  console.log({ currentIndex });
+  // reached outer bound? copy image from other end
+  if (currentIndex < 0) {
+    // move LAST item to FIRST position
+    currentIndex = imgElements.length - 1;
+    moveItem(imgElements[imgElements.length - 1], imgElements.length, false);
+    reorderItems = true; // mark for re-ordering after slide was finished
+  } else if (currentIndex === imgElements.length) {
+    currentIndex = 0;
+    // move FIRST item to LAST position
+    moveItem(imgElements[0], -imgElements.length, false);
+    reorderItems = true; // mark for re-ordering after slide was finished
   }
 
-  // color the selected position icon
-  iconElements.forEach((icon, itemIndex) => {
-    if (itemIndex === itemIndexCurrent) {
-      return icon.classList.add("active");
+  // update selected item
+  updateIconActive(currentIndex);
+
+  // slide images in given direction
+  setTimeout(() => {
+    imgElements.forEach((img, i) => {
+      // activate smooth transition
+      moveItem(img, inc, true);
+    });
+  }, 100);
+
+  // unblock buttons => so we can slide again
+  setTimeout(() => {
+    // bring items back into order after move has finished
+    if (reorderItems) {
+      // index 0 ? => move LAST items before first
+      let itemsReorder;
+      if (currentIndex === 0) {
+        itemsReorder = imgElements.slice(1);
+      }
+      // index LAST? => move FIRST items after last
+      else {
+        itemsReorder = imgElements.slice(0, imgElements.length - 1);
+      }
+      // move items out of order into order again
+      itemsReorder.forEach((img, i) => {
+        // activate smooth transition
+        moveItem(img, (itemsReorder.length+1)*(currentIndex === 0 ? -1 : 1), false);
+      });
     }
-    icon.classList.remove("active");
-  });
-};
-
-const slideContainers = (inc) => {
-  // shift containers in direction user clicked
-  imgContainers.forEach((container, i) => {
-    container.style.transition = transition;
-    container.style.removeProperty("z-index");
-    const { left } = getComputedStyle(container);
-    const leftNew = parseInt(left) + imageWidth * inc + "px";
-    container.style.left = leftNew;
-  });
-
-  // determine new current item (depending on last move)
-  // update selected item icon for user
-  setCurrentItem(-inc);
-
-  // outer LEFT bound?
-  if (itemIndexCurrent === 0 && containerIndexCurrent === 0) {
-    // move container 2 LEFT to container 1 and swap container index
-    swapContainers();
-  }
-  // outer RIGHT bound?
-  else if (
-    itemIndexCurrent === images.length - 1 &&
-    containerIndexCurrent === 1
-  ) {
-    // move container 1 RIGHT to container 2 and swap container index
-    swapContainers();
-  }
-};
-
-const swapContainers = () => {
-  // WAIT until containers have locked in (transition finished)
-  setTimeout(() => {
-    const containerStyle = getComputedStyle(
-      imgContainers[containerIndexCurrent]
-    );
-    // calculate new container position next to other one
-    const leftNew =
-      parseInt(containerStyle.left) +
-      (containerIndexCurrent === 0 ? -1 : 1) * parseInt(containerStyle.width) +
-      "px";
-
-    // perform move (prevent transition)
-    const containerOther = imgContainers[containerIndexCurrent === 0 ? 1 : 0];
-    containerOther.style.transition = "none";
-    containerOther.style.left = leftNew;
-
-    // swap containers in array
-    containerIndexCurrent = containerIndexCurrent === 0 ? 1 : 0;
-    const temp = imgContainers[0];
-    imgContainers[0] = imgContainers[1];
-    imgContainers[1] = temp;
-  }, transitionInt);
-};
-
-// click RIGHT arrow icon
-const slideNext = (inc = 1) => {
-  if (blockButtons) return;
-  blockButtons = true;
-
-  // slide all images inc times to the LEFT
-  slideContainers(-inc);
-
-  setTimeout(() => {
     blockButtons = false;
   }, transitionInt);
 };
 
-// click LEFT arrow icon
-const slidePrevious = (inc = 1) => {
-  if (blockButtons) return;
-  blockButtons = true;
+// click RIGHT
+const slideNext = (inc = 1) => slideImages(inc);
 
-  // slide all images inc times to the RIGHT
-  slideContainers(inc);
-
-  setTimeout(() => {
-    blockButtons = false;
-  }, transitionInt);
-};
+// click LEFT
+const slidePrevious = (inc = -1) => slideImages(inc);
 
 // make buttons work...
 btnPrevious.addEventListener("click", () => slidePrevious());
@@ -164,5 +172,5 @@ btnNext.addEventListener("click", () => slideNext());
 
 // autoslide...
 setInterval(() => {
-  slideNext()
-},3000)
+  slideNext();
+}, 3000);

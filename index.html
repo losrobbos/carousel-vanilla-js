@@ -12,14 +12,6 @@
       padding: 0;
     }
 
-    :root {
-      --image-width: 300px;
-      --image-height: 200px;
-      --image-count: 4;
-      --transition-number: 0.7s;
-      --transition: left var(--transition-number);
-    }
-
     body {
       display: grid;
       place-items: center;
@@ -31,6 +23,13 @@
       overflow: hidden;
     }
 
+    :root {
+      --image-width: 300px;
+      --image-height: 200px;
+      --transition-number: 1s;
+      --transition: left var(--transition-number);
+    }
+
     h2 {
       text-align: center;
     }
@@ -38,7 +37,6 @@
     .viewbox {
       margin: auto;
       position: relative;
-      height: var(--image-height);
       width: var(--image-width);
       border: 2px solid #aaa;
       border-radius: 20px;
@@ -52,6 +50,7 @@
       font-size: 2rem;
       opacity: 0.3;
       z-index: 1;
+      user-select: none;
     }
 
     .viewbox button:nth-of-type(1) {
@@ -64,25 +63,18 @@
 
 
     .images {
-      position: absolute;
-      display: flex;
-      top: 0;
-      width: calc(var(--image-width)*var(--image-count));
-      height: 100%;
-      transition: var(--transition);
-      border: 1px solid #ccc;
-    }
-
-    .images:nth-of-type(1) {
-      left: calc(-1*var(--image-width)*var(--image-count));
-    }
-    .images:nth-of-type(2) {
-      left: 0;
+      position: relative;
+      height: var(--image-height);
     }
 
     .images>* {
+      position: absolute;
+      top: 0;
       width: var(--image-width);
-      height: 100%;
+      height: var(--image-height);
+      transition: var(--transition);
+      display: grid; 
+      place-items: center;
       font-size: 2rem;
       background-color: #ccc;
     }
@@ -110,6 +102,7 @@
       border-radius: 50%;
       display: grid;
       place-items: center;
+      user-select: none;
     }
 
     .icon:hover {
@@ -131,18 +124,11 @@
     <div class="carousel">
 
       <div class="viewbox">
-        <!-- TWO image containers - allow easier cycling at bounds -->
-        <div class="images"></div>
         <div class="images"></div>
         <button class="btn-previous">&lt;</button>
         <button class="btn-next">&gt;</button>
       </div>
-      <div class="icons">
-        <div class="icon active">1</div>
-        <div class="icon">2</div>
-        <div class="icon">3</div>
-        <div class="icon">4</div>
-      </div>
+      <div class="icons"></div>
 
     </div>
     <p>Images from unsplash.com</p>
